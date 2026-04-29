@@ -348,23 +348,23 @@ export class ConsultaArticulosAlmacenComponent {
   fetchProveedores() {
     this.limpiarMessages();
     this.isLoadingProveedores = true;
-    const afacod = this.selectedAlmacen.afacod;
-    const asucod = this.selectedAlmacen.asucod;
-    const artcod = this.selectedAlmacen.artcod;
+    const afacod = this.selectedAlmacen.art_Afa_AFACOD;
+    const asucod = this.selectedAlmacen.art_Asu_ASUCOD;
+    const artcod = this.selectedAlmacen.art_ARTCOD;
 
-    // this.http.get(`${environment.backendUrl}/api/more/proveedores-por-articulo/${this.entcod}/${afacod}/${asucod}/${artcod}`).subscribe({
-    //   next: (res) => {
-    //     this.isLoadingProveedores = false;
-    //     this.proveedores = res;
-    //     this.pageProv = 0;
-    //   },
-    //   error: (err) => {
-    //     this.pageProv = 0;
-    //     this.proveedores = [];
-    //     this.isLoadingProveedores = false;
-    //     this.proveedoresError = err.error?.error || err.error;
-    //   }
-    // })
+    this.http.get(`${environment.backendUrl}/api/more/proveedores-por-articulo/${this.entcod}/${afacod}/${asucod}/${artcod}`).subscribe({
+      next: (res) => {
+        this.isLoadingProveedores = false;
+        this.proveedores = res;
+        this.pageProv = 0;
+      },
+      error: (err) => {
+        this.pageProv = 0;
+        this.proveedores = [];
+        this.isLoadingProveedores = false;
+        this.proveedoresError = err.error?.error || err.error;
+      }
+    })
   }
   get paginatedProveedores(): any[] {if (!this.proveedores || this.proveedores.length === 0) return [];
     const start = this.pageProv * this.pageSize; return this.proveedores.slice(start, start + this.pageSize);
