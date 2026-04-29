@@ -9,9 +9,15 @@ public interface ArticulosPorAlmcenProjection {
     String getArt_ARTDES();
     String getArt_ARTREF();
     Integer getArt_ARTBLO();
+    Double getArt_ARTUNI();
     Double getMEAUNI();
     Double getMEASOL();
     Double getMEAREC();
     String getArt_Aun_AUNDES();
     Double getArt_ARTUCO();
+    Double getArt_ARTUEM();
+    Double getArt_ARTPMI();
+
+    Double getMEAMIN();
+    Double getMEAOPT();
 }

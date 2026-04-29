@@ -61,10 +61,20 @@ export class ConsultaArticulosAlmacenComponent {
   }
 
   fetchAlmacenes() {
-    // this.isLoading = true;
+    this.isLoading = true;
     this.limpiarMessages();
 
-
+    this.http.get<any>(`${environment.backendUrl}/api/mea/fetch-articulos-por-almacen/${this.entcod}?page=${this.page}`).subscribe({
+      next: (res) => {
+        this.isLoading = false;
+        this.almacenes = res;
+        this.updatePagination();
+      },
+      error: (err) => {
+        this.isLoading = false;
+        this.almacenError = err.error.error || err.error;
+      }
+    })
   }
   private updatePagination(): void {const total = this.totalPages;
     if (total === 0) {this.page = 0; return;}
@@ -85,8 +95,13 @@ export class ConsultaArticulosAlmacenComponent {
     return;
   }
 
+  isBloqueado(artblo: number): string {
+    if (artblo == 1) return 'Sí'
+    return 'No';
+  }
+
   //main table functions
-  sortField: 'afacod' | 'asucod' | 'artcod' | 'artdes' | 'artuni' | 'artref' | 'artblo' | 'afades' | null = null;
+  sortField: 'art_Afa_AFACOD' | 'art_Asu_ASUCOD' | 'art_ARTCOD' | 'art_ARTDES' | 'art_ARTUNI' | 'art_ARTREF' | 'art_ARTBLO' | null = null;
   sortColumn: string = '';
   sortDirection: 'asc' | 'desc' = 'asc';
   toggleSort(column: string) {
@@ -148,9 +163,162 @@ export class ConsultaArticulosAlmacenComponent {
     this.resizingColIndex = null;
   };
 
+  DownloadPDF() {
+    this.limpiarMessages();
+
+    const source = this.paginatedAlmacen;
+    if (!source?.length) {
+      this.almacenError = 'No hay datos para exportar.';
+      return;
+    }
+
+    const rows = source.map((row: any) => ({
+      afacod: row.art_Afa_AFACOD ?? '',
+      asucod: row.art_Asu_ASUCOD ?? '',
+      artcod: row.art_ARTCOD ?? '',
+      artdes: row.art_ARTDES ?? '',
+      artuni: row.art_ARTUNI ?? '',
+      artref: row.art_ARTREF ?? '',
+      artblo: this.isBloqueado(row.art_ARTBLO) ?? ''
+    }));
+
+    const columns = [
+      { header: 'Familia', dataKey: 'afacod' },
+      { header: 'Subfamilia', dataKey: 'asucod'},
+      { header: 'Código', dataKey: 'artcod'},
+      { header: 'Descripción', dataKey: 'artdes'},
+      { header: 'Estocaje', dataKey: 'artuni'},
+      { header: 'Referencia Universal', dataKey: 'artref'},
+      { header: 'Bloqueo', dataKey: 'artblo'}
+    ];
+
+    const doc = new jsPDF({ orientation: 'landscape', unit: 'pt', format: 'a4' });
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(14);
+    doc.text('Consulta de articulos por almacen', 40, 40);
+
+    autoTable(doc, {
+      startY: 60,
+      head: [columns.map(col => col.header)],
+      body: rows.map(row => columns.map(col => row[col.dataKey as keyof typeof row] ?? '')),
+      styles: { font: 'helvetica', fontSize: 10, cellPadding: 6 },
+      headStyles: { fillColor: [240, 240, 240], textColor: 33, fontStyle: 'bold' },
+      columnStyles: {
+        afacod: { cellWidth: 10 },
+        asucod: { cellWidth: 10 },
+        artcod: { cellWidth: 10 },
+        artdes: { cellWidth: 60 },
+        artuni: { cellWidth: 10 },
+        artref: { cellWidth: 15 },
+        artblo: { cellWidth: 8 }
+      }
+    });
+
+    doc.save('Consulta_de_articulos_por_almacen.pdf');
+  }
+
+  downloadExcel() {
+    this.limpiarMessages();
+    const rows = this.paginatedAlmacen;
+    if (!rows || rows.length === 0) {
+      this.almacenError = 'No hay datos para exportar.';
+      return;
+    }
+  
+    const exportRows = rows.map(row => ({
+      afacod: row.art_Afa_AFACOD ?? '',
+      asucod: row.art_Asu_ASUCOD ?? '',
+      artcod: row.art_ARTCOD ?? '',
+      artdes: row.art_ARTDES ?? '',
+      artuni: row.art_ARTUNI ?? '',
+      artref: row.art_ARTREF ?? '',
+      artblo: this.isBloqueado(row.art_ARTBLO) ?? ''
+    }));
+  
+    const worksheet = XLSX.utils.aoa_to_sheet([]);
+    XLSX.utils.sheet_add_aoa(worksheet, [['Consulta de artoculos por almacen']], { origin: 'A1' });
+    worksheet['!merges'] = [{ s: { r: 0, c: 0 }, e: { r: 0, c: 3 } }];
+    XLSX.utils.sheet_add_aoa(worksheet, [['Familias', 'Subfamilia', 'Código', 'Descripción', 'Estocaje', 'Referencia universal', 'Bloqueo']], { origin: 'A2' });
+    XLSX.utils.sheet_add_json(worksheet, exportRows, { origin: 'A3', skipHeader: true });
+
+    worksheet['!cols'] = [
+      { wch: 10 },
+      { wch: 10 },
+      { wch: 10 },
+      { wch: 60 },
+      { wch: 10 },
+      { wch: 15 },
+      { wch: 8 }
+    ];
+  
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Almacen');
+    const buffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+    saveAs(
+      new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }),
+      'Consulta_articulos_por_almacen.xlsx'
+    );
+  }
+
+  //detail grid functions
+  selectedAlmacen: any = null;
+  almacenDetailError: string = '';
+  almacenDetailSuccess: string = '';
+  isUpdating: boolean = false;
+  showDetails(almacen: any) {
+    this.limpiarMessages();
+    this.selectedAlmacen = almacen;
+    this.tempAlmacen = almacen;
+
+  }
+
+  closeDetails() {
+    this.selectedAlmacen = null;
+    this.tempAlmacen = [];
+    this.limpiarMessages();
+    // this.activeDetailTab = null;
+    // this.showProveedoresGrid = false;
+    // this.showExistenciasGrid = false;
+    // this.proveedores = [];
+    // this.existencias = [];
+  }
+
+  closeDetailsSure() {if (this.isUpdate) {return;} 
+    else {this.closeDetails();}
+  }
+
+  tempAlmacen: any = {};
+  isUpdate: boolean = false;
+  backupData: any = [];
+  modificar() {
+    this.isUpdate = true;
+    this.backupData = this.selectedAlmacen ? { ...this.selectedAlmacen } : {};
+  }
+
+  cancelar() {
+    this.isUpdate = false;
+    this.tempAlmacen = { ...this.backupData };
+  }
+
+  // updateSuccess() {
+  //   this.isUpdate = false;
+  //   this.allowToUpdate = false;
+  // }
+
+  allowToUpdate: boolean = false;
+  // isUpdateAllowed(afacod: string, afades: string) {
+  //   if (this.allowToUpdate) {
+  //     // this.updateFamilia(afacod, afades);
+  //   } else {
+  //     return;
+  //   }
+  // }
+
   //misc
   limpiarMessages() {
     this.almacenSuccess = '';
     this.almacenError = '';
+    this.almacenDetailError = '';
+    this.almacenDetailSuccess = '';
   }
 }

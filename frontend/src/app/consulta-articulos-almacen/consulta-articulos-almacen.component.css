@@ -10,5 +10,10 @@
 .test {display: flex; align-items: center; justify-content: center; gap: 5px;}
 .test2 {display: flex; align-items: center; justify-content: center; gap: 5px;}
 /* search container and inputs */
+/* table styles */
+tr.bloqueado {background-color: #aaa;}
+/* table styles */
+
+
 @media (min-width: 1700px) {.search-form {flex-direction: row;} 
 .title-area {align-items: center;}}
