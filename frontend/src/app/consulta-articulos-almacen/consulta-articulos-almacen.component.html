@@ -127,7 +127,7 @@
                 </thead>
                 <tbody>
                     <tr *ngFor="let p of paginatedAlmacen"
-                        [class.bloqueado]="p.artblo === 1"
+                        [class.bloqueado]="p.art_ARTBLO === 1"
                     >
                         <td
                             style="cursor: pointer;"
@@ -149,7 +149,7 @@
             </div>
             <div class="modal-backdrop" *ngIf="selectedAlmacen" (click)="closeDetailsSure()">
                 <div class="display">
-                    <div class="modal" *ngIf="selectedAlmacen">
+                    <div class="modal" *ngIf="selectedAlmacen" (click)="$event.stopPropagation()">
                         <div class="btns">
                             <div class="title-detail">
                                 <h3>Detalles de Almacen</h3>
@@ -168,7 +168,265 @@
                             <span>actualizando</span>
                         </div>  
                         <div class="detail-container">
-
+                            <div class="chunk-one">
+                                <div class="left">
+                                    <p class="p-style">Familia</p>
+                                    <p class="p-style">Subfamilia</p>
+                                    <p class="p-style">Código</p>
+                                </div>
+                                <div class="right">
+                                    <div class="on-two">
+                                        <textarea
+                                            [(ngModel)]="tempAlmacen.art_Afa_AFACOD"
+                                            [disabled]="!isUpdate"
+                                            (input)="allowToUpdate = true"
+                                            class="textArea-style smallTextArea" 
+                                        ></textarea>
+                                        <textarea
+                                            [(ngModel)]="tempAlmacen.art_Afa_AFADES"
+                                            [disabled]="!isUpdate"
+                                            (input)="allowToUpdate = true"
+                                            class="textArea-style tallText" 
+                                        ></textarea>
+                                    </div>
+                                    <div class="on-two">
+                                        <textarea
+                                            [(ngModel)]="tempAlmacen.art_Asu_ASUCOD"
+                                            [disabled]="!isUpdate"
+                                            (input)="allowToUpdate = true"
+                                            class="textArea-style smallTextArea" 
+                                        ></textarea>
+                                        <textarea
+                                            [(ngModel)]="tempAlmacen.art_Asu_ASUDES"
+                                            [disabled]="!isUpdate"
+                                            (input)="allowToUpdate = true"
+                                            class="textArea-style tallText" 
+                                        ></textarea>
+                                    </div>
+                                    <div class="on-two">
+                                        <textarea
+                                            [(ngModel)]="tempAlmacen.art_ARTCOD"
+                                            [disabled]="!isUpdate"
+                                            (input)="allowToUpdate = true"
+                                            class="textArea-style smallTextArea" 
+                                        ></textarea>
+                                        <textarea
+                                            [(ngModel)]="tempAlmacen.art_ARTDES"
+                                            [disabled]="!isUpdate"
+                                            (input)="allowToUpdate = true"
+                                            class="textArea-style tallText" 
+                                        ></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="chunk-two adjustedWidth">
+                                <div class="left">
+                                    <p class="p-style">Existencias</p>
+                                    <p class="p-style">Pte. Servir</p>
+                                    <p class="p-style">Pte. Entrada</p>
+                                </div>
+                                <div class="right">
+                                    <textarea
+                                        [(ngModel)]="tempAlmacen.meauni"
+                                        [disabled]="!isUpdate"
+                                        (input)="allowToUpdate = true"
+                                        class="textArea-style smallTextArea" 
+                                    ></textarea>
+                                    <textarea
+                                        [(ngModel)]="tempAlmacen.measol"
+                                        [disabled]="!isUpdate"
+                                        (input)="allowToUpdate = true"
+                                        class="textArea-style smallTextArea" 
+                                    ></textarea>
+                                    <textarea
+                                        [(ngModel)]="tempAlmacen.mearec"
+                                        [disabled]="!isUpdate"
+                                        (input)="allowToUpdate = true"
+                                        class="textArea-style smallTextArea" 
+                                    ></textarea>
+                                </div>
+                            </div>
+                            <div class="chunk-two adjustedWidthSecond">
+                                <div class="left">
+                                    <p class="p-style">Estocaje virtual</p>
+                                    <p class="p-style">Tipo unidades</p>
+                                    <p class="p-style">Unidades de consumo</p>
+                                </div>
+                                <div class="right">
+                                    <textarea
+                                        [ngModel]="calculateKEstVir(tempAlmacen.meauni, tempAlmacen.measol, tempAlmacen.mearec)"
+                                        [disabled]="!isUpdate"
+                                        (input)="allowToUpdate = true"
+                                        class="textArea-style smallTextArea" 
+                                    ></textarea>
+                                    <textarea
+                                        [(ngModel)]="tempAlmacen.art_Aun_AUNDES"
+                                        [disabled]="!isUpdate"
+                                        (input)="allowToUpdate = true"
+                                        class="textArea-style smallTextArea" 
+                                    ></textarea>
+                                    <textarea
+                                        [(ngModel)]="tempAlmacen.art_ARTUCO"
+                                        [disabled]="!isUpdate"
+                                        (input)="allowToUpdate = true"
+                                        class="textArea-style smallTextArea" 
+                                    ></textarea>
+                                </div>
+                            </div>
+                            <div class="chunk-three">
+                                <input 
+                                    class="checkbox" 
+                                    type="checkbox" 
+                                    [disabled]="!isUpdate"
+                                    (input)="allowToUpdate = true"
+                                    [checked]="tempAlmacen.art_ARTBLO === 1"
+                                /> <span class="p-style">Bloqueado</span>
+                            </div>
+                            <div class="chunk-four">
+                                <p class="p-style">Referencia virtual</p>
+                                <textarea
+                                    [(ngModel)]="tempAlmacen.art_ARTREF"
+                                    [disabled]="!isUpdate"
+                                    (input)="allowToUpdate = true"
+                                    class="textArea-style tallText" 
+                                ></textarea>
+                                <p class="p-style">Unidades en embalaje</p>
+                                <textarea
+                                    [(ngModel)]="tempAlmacen.art_ARTUEM"
+                                    [disabled]="!isUpdate"
+                                    (input)="allowToUpdate = true"
+                                    class="textArea-style smallTextArea" 
+                                ></textarea>
+                            </div>
+                            <div class="wrapper">
+                                <div class="chunk-five adjustedWidthSecond">
+                                    <div class="left fixx">
+                                        <p class="p-style">Pedido mínimo</p>
+                                        <p class="p-style">Precio Medio ponoderado</p>
+                                        <p class="p-style">Valor existencia</p>
+                                    </div>
+                                    <div class="right fix">
+                                        <textarea
+                                            [(ngModel)]="tempAlmacen.art_ARTPMI"
+                                            [disabled]="!isUpdate"
+                                            (input)="allowToUpdate = true"
+                                            class="textArea-style smallTextArea" 
+                                        ></textarea>
+                                        <textarea
+                                            [(ngModel)]="tempAlmacen.later"
+                                            [disabled]="!isUpdate"
+                                            (input)="allowToUpdate = true"
+                                            class="textArea-style smallTextArea" 
+                                        ></textarea>
+                                        <textarea
+                                            [ngModel]="calculateKvalExi(tempAlmacen.meauni, tempAlmacen.meapmp)"
+                                            [disabled]="!isUpdate"
+                                            (input)="allowToUpdate = true"
+                                            class="textArea-style smallTextArea" 
+                                        ></textarea>
+                                    </div>
+                                </div>
+                                <div class="chunk-five adjustedWidthSecond">
+                                    <div class="left">
+                                        <p class="p-style">Estocaje mínimo</p>
+                                        <p class="p-style">Estocaje óptimo</p>
+                                        <p class="p-style">Solicitar</p>
+                                    </div>
+                                    <div class="right">
+                                        <textarea
+                                            [(ngModel)]="tempAlmacen.meamin"
+                                            [disabled]="!isUpdate"
+                                            (input)="allowToUpdate = true"
+                                            class="textArea-style smallTextArea" 
+                                        ></textarea>
+                                        <textarea
+                                            [(ngModel)]="tempAlmacen.meaopt"
+                                            [disabled]="!isUpdate"
+                                            (input)="allowToUpdate = true"
+                                            class="textArea-style smallTextArea" 
+                                        ></textarea>
+                                        <textarea
+                                            [ngModel]="calculateKUniSol(tempAlmacen.meauni, tempAlmacen.measol, tempAlmacen.mearec, tempAlmacen.meamin, tempAlmacen.meaopt)"
+                                            [disabled]="!isUpdate"
+                                            (input)="allowToUpdate = true"
+                                            class="textArea-style smallTextArea" 
+                                        ></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="btns margin">
+                            <button 
+                                class="red-btn" 
+                                *ngIf="isUpdate" 
+                                (click)="cancelar()"
+                            >Cancelar</button>
+                            <button 
+                                class="purple-btn"
+                                [disabled]="isUpdate" 
+                                *ngIf="!isUpdate" 
+                                (click)="modificar()"
+                            >Modificar</button>
+                            <button 
+                                class="purple-btn" 
+                                [disabled]="!isUpdate" 
+                                *ngIf="isUpdate" 
+                            >Guardar</button>
+                        </div>
+                        <div class="more-detail-container">
+                            <div class="tabs" role="tablist" aria-label="Detalle tabs">
+                                <button
+                                    class="tab-btn"
+                                    role="tab"
+                                    [attr.aria-selected]="activeDetailTab === 'proveedores'"
+                                    [class.active-tab]="activeDetailTab === 'proveedores'"
+                                    (click)="showProveedores()"
+                                >
+                                    Proveedores
+                                </button>
+                            </div>
+                        </div>
+                        <div class="custom-grid-modal" *ngIf="showProveedoresGrid">
+                            <h1 class="errorBtn">{{proveedoresError}}</h1>
+                            <div *ngIf="isLoadingProveedores" class="loading-message">
+                                <div class="spinner"></div>
+                                <span>Cargando</span>
+                            </div>
+                            <table class="main-table">
+                                <thead>
+                                    <tr>
+                                        <th>Cod.Prov</th>
+                                        <th>Proveedor</th>
+                                        <th>Referencia Prov.</th>
+                                        <th>Unid.Embalaje</th>
+                                        <th>Observaciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let p of paginatedProveedores">
+                                        <td>{{p.tercod}}</td>
+                                        <td>{{p.ter_TERNOM}}</td>
+                                        <td>{{p.apref}}</td>
+                                        <td>{{p.apruem}}</td>
+                                        <td>{{p.aprobs}}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <div class="pagination-controls">
+                                <button (click)="prevPageProv()" [disabled]="pageProv === 0">Anterior</button>
+                                <span>Página</span>
+                                <input
+                                    type="number"
+                                    min="1"
+                                    [max]="totalPagesProveedores"
+                                    [value]="pageProv + 1"
+                                    (change)="goToPageProv($event)"
+                                    class="pagination-input"
+                                    class="pagination-input"
+                                />
+                                <span>de {{ totalPagesProveedores }}</span>
+                                <button (click)="nextPageProv(  )" [disabled]="pageProv + 1 >= totalPagesProveedores">Siguiente</button>
+                            </div>
                         </div>
                     </div>
                 </div>

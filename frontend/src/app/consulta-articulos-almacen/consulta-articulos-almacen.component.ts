@@ -269,7 +269,7 @@ export class ConsultaArticulosAlmacenComponent {
     this.limpiarMessages();
     this.selectedAlmacen = almacen;
     this.tempAlmacen = almacen;
-
+    this.showProveedores();
   }
 
   closeDetails() {
@@ -285,6 +285,23 @@ export class ConsultaArticulosAlmacenComponent {
 
   closeDetailsSure() {if (this.isUpdate) {return;} 
     else {this.closeDetails();}
+  }
+
+  kestvir: number | null = null;
+  calculateKEstVir(meauni: number, measol: number, mearec: number) {
+    if (!meauni || !measol || !mearec) {return;}
+    this.kestvir = meauni - measol + mearec 
+    return this.kestvir;
+  }
+  calculateKvalExi(meauni: number, meapmp: number) {
+    if (!meauni || !meapmp) {return;}
+    return meauni * meapmp;
+  }
+  calculateKUniSol(meauni: number, measol: number, mearec: number, meamin: number, meaopt: number): number {
+    const kestvir = this.calculateKEstVir(meauni, measol, mearec);
+    if (!kestvir || kestvir < meamin) {return 0;}
+    this.kestvir = meaopt - kestvir;
+    return this.kestvir;
   }
 
   tempAlmacen: any = {};
@@ -314,11 +331,57 @@ export class ConsultaArticulosAlmacenComponent {
   //   }
   // }
 
+  // sub details functions
+  activeDetailTab: 'proveedores' | null = null;
+  proveedoresError: string = '';
+  showProveedoresGrid: boolean = false;
+  isLoadingProveedores: boolean = false;
+  showProveedores() {
+    this.limpiarMessages();
+    this.showProveedoresGrid = true;
+    this.activeDetailTab = 'proveedores';
+    this.fetchProveedores();
+  }
+
+  proveedores: any = [];
+  pageProv: number = 0;
+  fetchProveedores() {
+    this.limpiarMessages();
+    this.isLoadingProveedores = true;
+    const afacod = this.selectedAlmacen.afacod;
+    const asucod = this.selectedAlmacen.asucod;
+    const artcod = this.selectedAlmacen.artcod;
+
+    // this.http.get(`${environment.backendUrl}/api/more/proveedores-por-articulo/${this.entcod}/${afacod}/${asucod}/${artcod}`).subscribe({
+    //   next: (res) => {
+    //     this.isLoadingProveedores = false;
+    //     this.proveedores = res;
+    //     this.pageProv = 0;
+    //   },
+    //   error: (err) => {
+    //     this.pageProv = 0;
+    //     this.proveedores = [];
+    //     this.isLoadingProveedores = false;
+    //     this.proveedoresError = err.error?.error || err.error;
+    //   }
+    // })
+  }
+  get paginatedProveedores(): any[] {if (!this.proveedores || this.proveedores.length === 0) return [];
+    const start = this.pageProv * this.pageSize; return this.proveedores.slice(start, start + this.pageSize);
+  }
+  get totalPagesProveedores(): number {return Math.max(1, Math.ceil((this.proveedores?.length ?? 0) / this.pageSize));}
+  prevPageProv(): void {if (this.pageProv > 0) this.pageProv--;}
+  nextPageProv(): void {if (this.pageProv < this.totalPagesProveedores - 1) this.pageProv++;}
+  goToPageProv(event: any): void {const inputPage = Number(event.target.value);
+    if (inputPage >= 1 && inputPage <= this.totalPages) {this.pageProv = inputPage - 1;}
+  }
+
   //misc
   limpiarMessages() {
     this.almacenSuccess = '';
     this.almacenError = '';
     this.almacenDetailError = '';
     this.almacenDetailSuccess = '';
+    this.proveedoresError = '';
   }
 }
