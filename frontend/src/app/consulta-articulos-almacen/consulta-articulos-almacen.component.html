@@ -18,6 +18,7 @@
                             <span>Buscar</span>
                             <select  
                                 class="search-bar"
+                                [(ngModel)]="selectedAlmacenNombre"
                             >
                                 <option 
                                     *ngFor="let a of almacenesSearch"
@@ -30,44 +31,49 @@
                             <input 
                                 type="text"   
                                 class="search-bar" 
-
+                                [(ngModel)]="mainSearch"
                             />
                             <span>Familia</span>
                             <input 
                                 type="text" 
                                 class="search-bar smallWidth" 
                                 name="familia"
+                                [(ngModel)]="familia"
                             >
                             <span>Subfamilia</span>
                             <input 
                                 type="text" 
                                 name="subfamilia" 
                                 class="search-bar smallWidth"
+                                [(ngModel)]="subfamilia"
                             />
                             <div class="search-options">
                                 <label>
                                     <input 
                                         type="radio" 
                                         name="optiones" 
-                                        
+                                        [(ngModel)]="bloqueado"
+                                        value="todos"
                                     /> Todos
                                     <input 
                                         type="radio" 
                                         name="optiones" 
-                                        
+                                        [(ngModel)]="bloqueado"
+                                        value="NoBloqueado"
                                     /> No Bloqueados
                                     <input 
                                         type="radio" 
                                         name="optiones" 
-                                        
+                                        [(ngModel)]="bloqueado"
+                                        value="bloqueado"
                                     /> Bloqueados
                                 </label>
                             </div> 
                         </div>                   
                     </div>
                     <div class="btns">
-                        <button type="button" class="purple-btn" >Buscar</button>
-                        <button type="button" class="purple-btn" >Limpiar</button>
+                        <button type="button" class="purple-btn" (click)="search()">Buscar</button>
+                        <button type="button" class="purple-btn" (click)="limpiarSearch()">Limpiar</button>
                     </div>
                 </div>
             </div>

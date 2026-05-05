@@ -272,12 +272,40 @@ export class ConsultaArticulosAlmacenComponent {
     this.http.get<any>(`${environment.backendUrl}/api/dep/fetch-almacenes-nombre/${this.entcod}/${this.eje}/${this.percod}/${this.cge}`).subscribe({
       next: (res) => {
         this.almacenesSearch = res;
+        this.selectedAlmacenNombre = this.almacenesSearch[0]?.depcod;
       },
       error: (err) => {
         console.error(err.error.error || err.error);
       }
     })
   }
+
+  selectedAlmacenNombre: string = '';
+  mainSearch: string = '';
+  familia: string = '';
+  subfamilia: string = '';
+  bloqueado:  'NoBloqueado' | 'bloqueado' | 'todos' = 'NoBloqueado';
+  search() {
+    this.isLoading = true;
+    this.limpiarMessages();
+
+    console.log(this.selectedAlmacenNombre);
+    console.log(this.mainSearch);
+    console.log(this.familia);
+    console.log(this.subfamilia);
+    console.log(this.bloqueado);
+
+
+  }
+
+  limpiarSearch() {
+    this.selectedAlmacenNombre = '';
+    this.mainSearch = '';
+    this.familia = '';
+    this.subfamilia = '';
+    this.bloqueado = 'NoBloqueado';
+  }
+
   //detail grid functions
   selectedAlmacen: any = null;
   almacenDetailError: string = '';
