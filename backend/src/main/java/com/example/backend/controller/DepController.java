@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.backend.dto.DepWithCgeView;
+import com.example.backend.dto.AlmacenbyDep;
 import com.example.backend.sqlserver2.repository.DepRepository;
 
 @RestController
@@ -41,6 +42,26 @@ public class DepController {
         } catch (DataAccessException ex) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(ERROR + ex.getMostSpecificCause().getMessage());
+        }
+    }
+
+    //selecting almacen for consulta de articulos por almacen
+    @GetMapping("/fetch-almacenes-nombre/{ent}/{eje}/{percod}/{cgecod}")
+    public ResponseEntity<?> fetchAlmacenesNombre(
+        @PathVariable Integer ent,
+        @PathVariable String eje,
+        @PathVariable String percod,
+        @PathVariable String cgecod
+    ) {
+        try {
+            List<AlmacenbyDep> almacenes = depRepository.findByENTAndEJEAndDEPALMAndDpes_PERCODAndCge_CGECOD(ent, eje, 1, percod, cgecod);
+            if (almacenes.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(SIN_RESULTADO);
+            }
+
+            return ResponseEntity.ok(almacenes);
+        } catch (DataAccessException ex) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ERROR + ex.getMostSpecificCause().getMessage());
         }
     }
 }

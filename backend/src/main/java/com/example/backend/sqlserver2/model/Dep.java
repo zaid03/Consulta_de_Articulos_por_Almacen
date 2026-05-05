@@ -1,20 +1,19 @@
 package com.example.backend.sqlserver2.model;
 
+import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import jakarta.persistence.IdClass;
-
 import jakarta.persistence.FetchType;
+import jakarta.persistence.Id;
+import jakarta.persistence.IdClass;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinColumns;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
-
-import java.util.List;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.Table;
 
 @Entity
 @IdClass(DepId.class)
@@ -81,17 +80,14 @@ public class Dep {
         @JoinColumn(name = "CGECOD", referencedColumnName = "CGECOD", insertable = false, updatable = false)
     })
     private Cge cge;
+    public Cge getCge() { return cge; }
+    public void setCge(Cge cge) { this.cge = cge; }
 
     @JsonIgnore
     @OneToMany(mappedBy = "dep", fetch = FetchType.LAZY)
     private List<Dpe> dpes;
-
-    public Cge getCge() { return cge; }
-    public void setCge(Cge cge) { this.cge = cge; }
-
     public List<Dpe> getDpes() { return dpes; }
     public void setDpes(List<Dpe> dpes) { this.dpes = dpes; }
-
 
     public Integer getENT() { return ENT; }
     public void setENT(Integer ENT) { this.ENT = ENT; }
