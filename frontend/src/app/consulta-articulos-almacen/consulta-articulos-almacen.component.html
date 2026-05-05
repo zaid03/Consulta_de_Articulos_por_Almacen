@@ -16,8 +16,13 @@
                     <div class="search-form">
                         <div class="test">
                             <span>Buscar</span>
-                            <select  class="search-bar" >
-                                <option>nigger1</option>
+                            <select  
+                                class="search-bar"
+                            >
+                                <option 
+                                    *ngFor="let a of almacenesSearch"
+                                    [value]="a.depcod"
+                                >{{a.depdes}}</option>
                             </select>
                         </div>
                         <div class="test2">

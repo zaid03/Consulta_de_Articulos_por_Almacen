@@ -33,6 +33,8 @@ export class ConsultaArticulosAlmacenComponent {
   //global variables
   private entcod: number | null = null;
   private eje: number | null = null;
+  private cge: string = '';
+  private percod: string = '';
   almacenes: any[] = [];
   page = 0;
   pageSize = 20;
@@ -46,11 +48,15 @@ export class ConsultaArticulosAlmacenComponent {
     this.limpiarMessages();
     const entidad = sessionStorage.getItem('Entidad');
     const eje = sessionStorage.getItem('EJERCICIO'); 
+    const centrogestor = sessionStorage.getItem('CENTROGESTOR');
+    const nombre = sessionStorage.getItem('USUCOD');
 
     if (entidad) {const parsed = JSON.parse(entidad); this.entcod = parsed.ENTCOD;}
     if (eje) {const parsed = JSON.parse(eje); this.eje = parsed.eje;}
+    if (centrogestor) {const parsed = JSON.parse(centrogestor); this.cge = parsed.value;}
+    if (nombre) {this.percod = nombre;}
 
-    if (!entidad || this.entcod === null || !eje || this.eje === null) {
+    if (!entidad || this.entcod === null || !eje || this.eje === null ) {
       sessionStorage.clear();
       alert('Debes iniciar sesión para acceder a esta página.');
       this.router.navigate(['/login']);
@@ -58,6 +64,7 @@ export class ConsultaArticulosAlmacenComponent {
     }
 
     this.fetchAlmacenes();
+    this.fetchAlmacenesSearch();
   }
 
   fetchAlmacenes() {
@@ -260,6 +267,17 @@ export class ConsultaArticulosAlmacenComponent {
     );
   }
 
+  almacenesSearch: any[] = [];
+  fetchAlmacenesSearch() {
+    this.http.get<any>(`${environment.backendUrl}/api/dep/fetch-almacenes-nombre/${this.entcod}/${this.eje}/${this.percod}/${this.cge}`).subscribe({
+      next: (res) => {
+        this.almacenesSearch = res;
+      },
+      error: (err) => {
+        console.error(err.error.error || err.error);
+      }
+    })
+  }
   //detail grid functions
   selectedAlmacen: any = null;
   almacenDetailError: string = '';
