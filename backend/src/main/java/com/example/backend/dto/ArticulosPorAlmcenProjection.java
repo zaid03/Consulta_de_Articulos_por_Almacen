@@ -17,7 +17,7 @@ public interface ArticulosPorAlmcenProjection {
     Double getArt_ARTUCO();
     Double getArt_ARTUEM();
     Double getArt_ARTPMI();
-
+    Double getMEAPMP();
     Double getMEAMIN();
     Double getMEAOPT();
 }
