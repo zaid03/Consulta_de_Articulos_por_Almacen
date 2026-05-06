@@ -32,18 +32,21 @@
                                 type="text"   
                                 class="search-bar" 
                                 [(ngModel)]="mainSearch"
+                                placeholder="Buscar"
                             />
                             <span>Familia</span>
                             <input 
                                 type="text" 
                                 class="search-bar smallWidth" 
                                 name="familia"
+                                placeholder="familia"
                                 [(ngModel)]="familia"
                             >
                             <span>Subfamilia</span>
                             <input 
                                 type="text" 
                                 name="subfamilia" 
+                                placeholder="subfamilia"
                                 class="search-bar smallWidth"
                                 [(ngModel)]="subfamilia"
                             />
@@ -53,19 +56,19 @@
                                         type="radio" 
                                         name="optiones" 
                                         [(ngModel)]="bloqueado"
-                                        value="todos"
+                                        value="Todos"
                                     /> Todos
                                     <input 
                                         type="radio" 
                                         name="optiones" 
                                         [(ngModel)]="bloqueado"
-                                        value="NoBloqueado"
+                                        value="No bloqueados"
                                     /> No Bloqueados
                                     <input 
                                         type="radio" 
                                         name="optiones" 
                                         [(ngModel)]="bloqueado"
-                                        value="bloqueado"
+                                        value="Bloqueados"
                                     /> Bloqueados
                                 </label>
                             </div> 

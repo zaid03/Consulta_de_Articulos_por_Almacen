@@ -91,14 +91,12 @@ export class ConsultaArticulosAlmacenComponent {
   prevPage() {
     if (this.page == 0) return;
     this.page = this.page - 1;
-    this.fetchAlmacenes() //will be replaced later
-    // this.isSearching ? this.searchArticulo() : this.fetchArticulos();
+    this.isSearching ? this.search() : this.fetchAlmacenes();
     return;
   }
   nextPage() {
     this.page = this.page + 1;
-    this.fetchAlmacenes() //will be replaced later
-    // this.isSearching ? this.searchArticulo() : this.fetchArticulos();
+    this.isSearching ? this.search() : this.fetchAlmacenes();
     return;
   }
 
@@ -284,26 +282,53 @@ export class ConsultaArticulosAlmacenComponent {
   mainSearch: string = '';
   familia: string = '';
   subfamilia: string = '';
-  bloqueado:  'NoBloqueado' | 'bloqueado' | 'todos' = 'NoBloqueado';
+  bloqueado:  'No bloqueados' | 'Bloqueados' | 'Todos' = 'No bloqueados';
+  isSearching: boolean = false;
   search() {
     this.isLoading = true;
+    this.isSearching = true;
     this.limpiarMessages();
+    this.page = 0;
 
-    console.log(this.selectedAlmacenNombre);
-    console.log(this.mainSearch);
-    console.log(this.familia);
-    console.log(this.subfamilia);
-    console.log(this.bloqueado);
+    let params = new HttpParams();
+    
+    if (this.mainSearch?.trim()) {
+      params = params.set('mainSearch', this.mainSearch.trim());
+    }
+    if (this.familia?.trim()) {
+      params = params.set('afaCod', this.familia.trim());
+    }
+    if (this.subfamilia?.trim()) {
+      params = params.set('asuCod', this.subfamilia.trim());
+    }
+    if (this.bloqueado) {
+      params = params.set('bloqueado', this.bloqueado);
+    }
+    if (this.selectedAlmacenNombre?.trim()) {
+      params = params.set('almacen', this.selectedAlmacenNombre.trim());
+    }
+    
+    params = params.set('page', this.page.toString());
 
-
+    this.http.get<any>(`${environment.backendUrl}/api/mea/search-articulos/${this.entcod}`, { params }).subscribe({
+      next: (res) => {
+        this.isLoading = false;
+        this.almacenes = res;
+        this.updatePagination();
+      },
+      error: (err) => {
+        this.isLoading = false;
+        this.almacenError = err.error.error || err.error;
+      }
+    });
   }
 
   limpiarSearch() {
-    this.selectedAlmacenNombre = '';
     this.mainSearch = '';
     this.familia = '';
     this.subfamilia = '';
-    this.bloqueado = 'NoBloqueado';
+    this.bloqueado = 'No bloqueados';
+    this.isSearching = false;
   }
 
   //detail grid functions
