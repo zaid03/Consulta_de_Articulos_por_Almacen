@@ -43,6 +43,23 @@ public class MeaController {
         }
     }
 
+    //getting pagination number
+    @GetMapping("/get-pag/{ent}")
+    public ResponseEntity<?> getPag(
+        @PathVariable Integer ent
+    ) {
+        try {
+            Integer pagination = meaRepository.countByENT(ent);
+            if (pagination == 0) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(SIN_RESULTADO);
+            }
+
+            return ResponseEntity.ok(pagination);
+        } catch (Exception ex) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ERROR + ex.getMessage());
+        }
+    }
+
     //search query for articulos por almacen
     @GetMapping("/search-articulos/{ent}")
     public ResponseEntity<?> searchArticulos(

@@ -65,6 +65,7 @@ export class ConsultaArticulosAlmacenComponent {
 
     this.fetchAlmacenes();
     this.fetchAlmacenesSearch();
+    this.getPagination();
   }
 
   fetchAlmacenes() {
@@ -83,6 +84,19 @@ export class ConsultaArticulosAlmacenComponent {
       }
     })
   }
+
+  pagination: number = 0;
+  getPagination() {
+    this.http.get<any>(`${environment.backendUrl}/api/mea/get-pag/${this.entcod}`).subscribe({
+      next: (res) => {
+        this.pagination = Math.ceil(res/ 20);
+      },
+      error: (err) => {
+        console.warn(err.error.error || err.error);
+      }
+    })
+  }
+
   private updatePagination(): void {const total = this.totalPages;
     if (total === 0) {this.page = 0; return;}
   }

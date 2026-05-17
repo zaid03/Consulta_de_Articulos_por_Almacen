@@ -16,6 +16,9 @@ public interface MeaRepository extends JpaRepository<Mea, MeaId> {
     //selecting articulos por almacen
     List<ArticulosPorAlmcenProjection> findByENT(Integer ent, Pageable pageable);
 
+    //getting pagination number
+    Integer countByENT(Integer ent);
+    
     //search query for articulos por almacen
     @Query(value = """
         SELECT 
